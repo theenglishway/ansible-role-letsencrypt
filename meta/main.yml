@@ -1,0 +1,14 @@
+galaxy_info:
+  author: theenglishway
+  description: Let's Encrypt certificate obtention with certbot
+
+  license: BSD
+
+  min_ansible_version: 2.4
+
+dependencies:
+  - name: pip
+    become: yes
+    vars:
+      pip_install_packages:
+        - pexpect

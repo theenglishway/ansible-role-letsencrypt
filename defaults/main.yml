@@ -1,0 +1,6 @@
+---
+letsencrypt_dns_provider:
+letsencrypt_credentials_dir: /root/.credentials
+
+letsencrypt_domain:
+letsencrypt_email: "{{ admin_email }}"

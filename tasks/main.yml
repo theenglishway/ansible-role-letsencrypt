@@ -1,0 +1,55 @@
+---
+- name: Add stretch-backports repositories
+  become: yes
+  copy:
+    dest: /etc/apt/sources.list.d/
+    src: files/stretch-backports.list
+
+- name: Update apt cache
+  become: yes
+  apt:
+    update_cache: true
+
+- name: Install certbot
+  become: yes
+  apt:
+    name:
+      - python-certbot-nginx
+    default_release: stretch-backports
+
+- name: Install {{ letsencrypt_dns_python_package }}
+  become: yes
+  pip:
+    executable: pip3
+    name: "{{ letsencrypt_dns_python_package }}"
+
+- name: Create credentials dir {{ letsencrypt_credentials_dir }}
+  become: yes
+  file:
+    dest: "{{ letsencrypt_credentials_dir }}"
+    state: directory
+    mode: 0600
+
+- name: Copy credentials for {{ letsencrypt_dns_provider }}
+  become: yes
+  template:
+    dest: "{{ letsencrypt_credentials_file }}"
+    src: templates/credentials-ovh.ini
+    mode: 0400
+  no_log: true
+
+- name: Obtain certificate for {{ letsencrypt_domain }}
+  become: yes
+  command: >
+    certbot certonly
+    -a "{{ letsencrypt_dns_plugin }}"
+    -i nginx
+    -d "*.{{ letsencrypt_domain }}"
+    -d "{{ letsencrypt_domain }}"
+    -m "{{ letsencrypt_email }}"
+    --agree-tos
+    --no-eff-email
+    --dns-{{ letsencrypt_dns_provider }}-credentials "{{ letsencrypt_credentials_file }}"
+    --keep-until-expiring
+  register: output
+  changed_when: output.rc != 0

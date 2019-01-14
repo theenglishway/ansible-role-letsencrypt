@@ -1,0 +1,4 @@
+---
+letsencrypt_dns_plugin: dns-{{ letsencrypt_dns_provider }}
+letsencrypt_dns_python_package: certbot-{{ letsencrypt_dns_plugin }}
+letsencrypt_credentials_file: "{{ letsencrypt_credentials_dir }}/{{ letsencrypt_dns_provider }}.ini"

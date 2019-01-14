@@ -1,0 +1,2 @@
+# Stretch backports, added for certbot
+deb http://ftp.debian.org/debian stretch-backports main
